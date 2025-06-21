@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tartan Validation Dashboard</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <h1>Sensys API Dashboard</h1>
+  <div class="stats">
+    <p><strong>Total Requests:</strong> {{stats.totalRequests}}</p>
+    <p><strong>Aadhaar Requests:</strong> {{stats.aadhaarRequests}}</p>
+    <p><strong>PAN Requests:</strong> {{stats.panRequests}}</p>
+    <p><strong>Bank Requests:</strong> {{stats.bankRequests}}</p>
+  </div>
+
+  <h2>Recent Logs</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Type</th>
+        <th>User ID</th>
+        <th>Data</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each logs}}
+        <tr>
+          <td>{{this.time}}</td>
+          <td>{{this.type}}</td>
+          <td>{{this.user_id}}</td>
+          <td>{{this.data}}</td>
+          <td>{{this.status}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</body>
+</html>
