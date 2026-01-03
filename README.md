@@ -40,7 +40,7 @@ A full-stack KYC (Know Your Customer) validation system built with Node.js and E
 ## 🚀 Live Demo
 
 **Frontend Client:** [Deploy URL here]  
-**API Base URL:** `https://kyc-validation-api-production.up.railway.app`
+**API Base URL:** `your/url`
 
 ### Demo Credentials
 ```
@@ -69,7 +69,7 @@ Username: demo | Password: demo123
 
 - Node.js (v14 or higher)
 - npm or yarn
-- Tartan API credentials ([Get them here](https://tartanhq.com)) - Optional for demo
+- Tartan API credentials ([Get them here]) - Optional for demo
 
 ### Steps
 
@@ -89,8 +89,6 @@ Username: demo | Password: demo123
    Create a `.env` file in the root directory:
    ```env
    PORT=3000
-   TARTAN_CLIENT_ID=your_client_id_here
-   TARTAN_CLIENT_SECRET=your_client_secret_here
    ALLOWED_ORIGINS=http://localhost:3000,https://yourdomain.com
    ```
 
@@ -110,8 +108,6 @@ Username: demo | Password: demo123
 | Variable | Description | Required | Default |
 |----------|-------------|----------|---------|
 | PORT | Server port | No | 3000 |
-| TARTAN_CLIENT_ID | Tartan API Client ID (Demo) | Yes | - |
-| TARTAN_CLIENT_SECRET | Tartan API Client Secret (Demo) | Yes | - |
 | ALLOWED_ORIGINS | CORS allowed origins (comma-separated) | No | * |
 
 ### Folder Structure
@@ -245,17 +241,17 @@ Content-Type: application/json
 
 ```bash
 # Validate Aadhaar
-curl -X POST https://kyc-validation-api-production.up.railway.app/validate-aadhaar \
+curl -X POST  your/url \
   -H "Content-Type: application/json" \
   -d '{"aadhaar_number": "123456789012", "user_id": "user123"}'
 
 # Validate PAN
-curl -X POST https://kyc-validation-api-production.up.railway.app/validate-pan \
+curl -X POST your/url \
   -H "Content-Type: application/json" \
   -d '{"pan_number": "ABCDE1234F", "user_id": "user123"}'
 
 # Validate Bank Account
-curl -X POST https://kyc-validation-api-production.up.railway.app/validate-bank \
+curl -X POST your/url \
   -H "Content-Type: application/json" \
   -d '{"account_number": "12345678901234", "ifsc_code": "SBIN0001234", "user_id": "user123"}'
 ```
@@ -264,7 +260,7 @@ curl -X POST https://kyc-validation-api-production.up.railway.app/validate-bank 
 
 ```javascript
 async function validateAadhaar(aadhaarNumber, userId) {
-  const response = await fetch('https://kyc-validation-api-production.up.railway.app/validate-aadhaar', {
+  const response = await fetch('your/url', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -288,7 +284,7 @@ validateAadhaar('123456789012', 'user123');
 ```python
 import requests
 
-url = "https://kyc-validation-api-production.up.railway.app/validate-aadhaar"
+url = "your/url"
 payload = {
     "aadhaar_number": "123456789012",
     "user_id": "user123"
@@ -317,7 +313,6 @@ print(response.json())
 - **Anime.js** - Advanced animation effects
 
 ### Deployment
-- **Railway** - Cloud hosting platform
 - **Git** - Version control
 
 ## 📊 Validation Rules (Format Only)
