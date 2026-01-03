@@ -1,9 +1,7 @@
 require('dotenv').config();
 const express = require('express');
-const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const fetch = require('node-fetch');
 const exphbs = require('express-handlebars');
 const rateLimit = require('express-rate-limit');
 
@@ -48,20 +46,45 @@ const validatePAN = (pan_number) => /^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pan_number);
 const validateIFSC = (ifsc_code) => /^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc_code);
 const validateAccountNumber = (account_number) => /^\d{9,18}$/.test(account_number);
 
-// JWT generation
-function generateTartanToken(user_id = 'user-' + Date.now()) {
-  if (!process.env.TARTAN_CLIENT_ID || !process.env.TARTAN_CLIENT_SECRET) {
-    throw new Error('Tartan API credentials not configured');
-  }
-
-  const now = Math.floor(Date.now() / 1000);
-  const payload = {
-    client_id: process.env.TARTAN_CLIENT_ID,
-    user_id,
-    iat: now,
-    exp: now + 600
+// Mock validation logic (Replace with your actual validation service)
+function performAadhaarValidation(aadhaar_number) {
+  // Replace this with actual validation logic or external API call
+  return {
+    success: true,
+    valid: true,
+    aadhaar_number: `XXXX-XXXX-${aadhaar_number.slice(-4)}`,
+    message: 'Aadhaar number verified successfully',
+    status: 'Active',
+    verified_at: new Date().toISOString()
   };
-  return jwt.sign(payload, process.env.TARTAN_CLIENT_SECRET, { algorithm: 'HS256' });
+}
+
+function performPANValidation(pan_number) {
+  // Replace this with actual validation logic or external API call
+  return {
+    success: true,
+    valid: true,
+    pan_number: `${pan_number.slice(0, 3)}XX${pan_number.slice(-2)}`,
+    name: 'Sample Name',
+    pan_status: 'Active',
+    message: 'PAN verified successfully',
+    verified_at: new Date().toISOString()
+  };
+}
+
+function performBankValidation(account_number, ifsc_code) {
+  // Replace this with actual validation logic or external API call
+  return {
+    success: true,
+    valid: true,
+    account_number: `XXXX${account_number.slice(-4)}`,
+    ifsc_code: ifsc_code,
+    account_name: 'Sample Account Holder',
+    bank_name: 'Sample Bank',
+    branch: 'Sample Branch',
+    message: 'Bank account verified successfully',
+    verified_at: new Date().toISOString()
+  };
 }
 
 // Health check endpoint
@@ -100,36 +123,21 @@ app.post('/validate-aadhaar', async (req, res) => {
   stats.aadhaarRequests++;
 
   try {
-    const token = generateTartanToken(user_id);
-
-    const response = await fetch('https://node.tartanhq.com/api/kyc/aadhaar/verify/', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ aadhaar_number })
-    });
-
-    const result = await response.json();
+    // Call your custom validation logic or external API
+    const result = performAadhaarValidation(aadhaar_number);
 
     logs.push({
       type: 'Aadhaar',
       time: new Date().toLocaleString(),
       user_id,
-      data: `XXXX-XXXX-${aadhaar_number.slice(-4)}`, // Mask sensitive data
-      status: response.status
+      data: `XXXX-XXXX-${aadhaar_number.slice(-4)}`,
+      status: 200
     });
 
-    if (!response.ok) {
-      return res.status(response.status).json({ 
-        success: false, 
-        error: result.message || 'Validation failed',
-        details: result 
-      });
-    }
-
-    res.status(200).json({ success: true, data: result });
+    res.status(200).json({ 
+      success: true, 
+      data: result 
+    });
 
   } catch (err) {
     console.error('Aadhaar validation error:', err);
@@ -165,36 +173,21 @@ app.post('/validate-pan', async (req, res) => {
   stats.panRequests++;
 
   try {
-    const token = generateTartanToken(user_id);
-
-    const response = await fetch('https://node.tartanhq.com/api/kyc/pan/verify/', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ pan_number: panUpper })
-    });
-
-    const result = await response.json();
+    // Call your custom validation logic or external API
+    const result = performPANValidation(panUpper);
 
     logs.push({
       type: 'PAN',
       time: new Date().toLocaleString(),
       user_id,
-      data: `${panUpper.slice(0, 3)}XX${panUpper.slice(-2)}`, // Mask sensitive data
-      status: response.status
+      data: `${panUpper.slice(0, 3)}XX${panUpper.slice(-2)}`,
+      status: 200
     });
 
-    if (!response.ok) {
-      return res.status(response.status).json({ 
-        success: false, 
-        error: result.message || 'Validation failed',
-        details: result 
-      });
-    }
-
-    res.status(200).json({ success: true, data: result });
+    res.status(200).json({ 
+      success: true, 
+      data: result 
+    });
 
   } catch (err) {
     console.error('PAN validation error:', err);
@@ -237,36 +230,21 @@ app.post('/validate-bank', async (req, res) => {
   stats.bankRequests++;
 
   try {
-    const token = generateTartanToken(user_id);
-
-    const response = await fetch('https://node.tartanhq.com/api/kyc/bank-account/verify/', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ account_number, ifsc_code: ifscUpper })
-    });
-
-    const result = await response.json();
+    // Call your custom validation logic or external API
+    const result = performBankValidation(account_number, ifscUpper);
 
     logs.push({
       type: 'Bank',
       time: new Date().toLocaleString(),
       user_id,
-      data: `XXXX${account_number.slice(-4)} / ${ifscUpper}`, // Mask sensitive data
-      status: response.status
+      data: `XXXX${account_number.slice(-4)} / ${ifscUpper}`,
+      status: 200
     });
 
-    if (!response.ok) {
-      return res.status(response.status).json({ 
-        success: false, 
-        error: result.message || 'Validation failed',
-        details: result 
-      });
-    }
-
-    res.status(200).json({ success: true, data: result });
+    res.status(200).json({ 
+      success: true, 
+      data: result 
+    });
 
   } catch (err) {
     console.error('Bank validation error:', err);
