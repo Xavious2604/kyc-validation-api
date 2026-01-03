@@ -146,8 +146,22 @@ app.post('/validate-bank', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+// Aadhaar validation
+if (!/^\d{12}$/.test(aadhaar_number)) {
+  return res.status(400).json({ error: "Invalid Aadhaar format" });
+}
 
+// PAN validation
+if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pan_number)) {
+  return res.status(400).json({ error: "Invalid PAN format" });
+}
+
+// IFSC validation
+if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc_code)) {
+  return res.status(400).json({ error: "Invalid IFSC format" });
+}
 // Server start
 app.listen(PORT, () => {
   console.log(`🚀 Dashboard running at: http://localhost:${PORT}`);
 });
+
