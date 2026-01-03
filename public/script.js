@@ -5,7 +5,7 @@ class KYCValidator {
     // Use environment-based URL (fallback to production)
     this.BASE_URL = window.location.hostname === 'localhost' 
       ? 'http://localhost:3000' 
-      : 'https://kyc-validation-api-production.up.railway.app';
+      : 'your/url';
     
     this.currentUser = null;
     this.scene = null;
@@ -754,3 +754,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
